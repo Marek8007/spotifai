@@ -4,7 +4,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
     Alert,
     KeyboardAvoidingView,
     Platform,
@@ -19,7 +18,6 @@ export default function LoginScreen() {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
 
     const login = useAuthStore((s) => s.login);
 
@@ -29,15 +27,12 @@ export default function LoginScreen() {
             return;
         }
 
-        setLoading(true);
         try {
             const { user, isPremium } = await loginAction(name.trim(), password);
             await login(user, isPremium);
             router.replace("/(stack)");
         } catch (error: any) {
             Alert.alert("Error", error.message ?? "No se pudo iniciar sesión");
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -95,15 +90,10 @@ export default function LoginScreen() {
                     </View>
 
                     <Pressable
-                        className={`mt-2 h-[52px] items-center justify-center rounded-full bg-[#1DB954] ${loading ? "opacity-60" : ""}`}
+                        className="mt-2 h-[52px] items-center justify-center rounded-full bg-[#1DB954]"
                         onPress={handleLogin}
-                        disabled={loading}
                     >
-                        {loading ? (
-                            <ActivityIndicator color="#000000" />
-                        ) : (
-                            <Text className="text-base font-bold tracking-[0.5px] text-black">Iniciar sesión</Text>
-                        )}
+                        <Text className="text-base font-bold tracking-[0.5px] text-black">Iniciar sesión</Text>
                     </Pressable>
                 </View>
 

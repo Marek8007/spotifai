@@ -3,7 +3,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
     Alert,
     KeyboardAvoidingView,
     Platform,
@@ -19,7 +18,6 @@ export default function RegisterScreen() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [fechaNacimiento, setFechaNacimiento] = useState("");
-    const [loading, setLoading] = useState(false);
 
     const isEmailValid = (value: string) => /.+@.+\..+/.test(value);
     const isDateValid = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value);
@@ -40,7 +38,6 @@ export default function RegisterScreen() {
             return;
         }
 
-        setLoading(true);
         try {
             await registerAction({
                 username: username.trim(),
@@ -57,8 +54,6 @@ export default function RegisterScreen() {
             ]);
         } catch (error: any) {
             Alert.alert("Error", error?.response?.data ?? "No se pudo registrar el usuario");
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -129,15 +124,10 @@ export default function RegisterScreen() {
                     </View>
 
                     <Pressable
-                        className={`mt-2 h-[52px] items-center justify-center rounded-full bg-[#1DB954] ${loading ? "opacity-60" : ""}`}
+                        className="mt-2 h-[52px] items-center justify-center rounded-full bg-[#1DB954]"
                         onPress={handleRegister}
-                        disabled={loading}
                     >
-                        {loading ? (
-                            <ActivityIndicator color="#000000" />
-                        ) : (
-                            <Text className="text-base font-bold text-black">Registrarme</Text>
-                        )}
+                        <Text className="text-base font-bold text-black">Registrarme</Text>
                     </Pressable>
                 </View>
 
