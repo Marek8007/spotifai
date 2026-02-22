@@ -17,7 +17,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -25,14 +25,14 @@ export default function LoginScreen() {
     const login = useAuthStore((s) => s.login);
 
     const handleLogin = async () => {
-        if (!email.trim() || !password.trim()) {
-            Alert.alert("Error", "Introduce tu email y contraseña");
+        if (!username.trim() || !password.trim()) {
+            Alert.alert("Error", "Introduce tu nombre de usuario y contraseña");
             return;
         }
 
         setLoading(true);
         try {
-            const { user, isPremium } = await loginAction(email.trim(), password);
+            const { user, isPremium } = await loginAction(username.trim(), password);
             await login(user, isPremium);
             router.replace("/(app)/(tabs)/home");
         } catch (error: any) {
@@ -51,22 +51,21 @@ export default function LoginScreen() {
                 {/* Logo / Título */}
                 <View style={styles.header}>
                     <Ionicons name="musical-notes" size={48} color="#1DB954" />
-                    <Text style={styles.appName}>SpotifAI</Text>
+                    <Text style={styles.appName}>spotify</Text>
                     <Text style={styles.subtitle}>Inicia sesión para continuar</Text>
                 </View>
 
                 {/* Formulario */}
                 <View style={styles.form}>
-                    {/* Email */}
+                    {/* Nombre de usuario */}
                     <View style={styles.inputWrapper}>
-                        <Ionicons name="mail-outline" size={20} color="#B3B3B3" style={styles.inputIcon} />
+                        <Ionicons name="person-outline" size={20} color="#B3B3B3" style={styles.inputIcon} />
                         <TextInput
                             style={styles.input}
-                            placeholder="Email"
+                            placeholder="Nombre de usuario"
                             placeholderTextColor="#535353"
-                            value={email}
-                            onChangeText={setEmail}
-                            keyboardType="email-address"
+                            value={username}
+                            onChangeText={setUsername}
                             autoCapitalize="none"
                             autoCorrect={false}
                         />

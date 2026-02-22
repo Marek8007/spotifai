@@ -15,7 +15,6 @@ interface AuthStore {
     isPremium: boolean;
     login: (user: User, isPremium: boolean) => Promise<void>;
     logout: () => Promise<void>;
-    hydrate: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStore>((set) => ({
@@ -33,21 +32,5 @@ export const useAuthStore = create<AuthStore>((set) => ({
         await SecureStore.deleteItemAsync("user");
         await SecureStore.deleteItemAsync("isPremium");
         set({ user: null, isAuthenticated: false, isPremium: false });
-    },
-
-    hydrate: async () => {
-        try {
-            const userStr = await SecureStore.getItemAsync("user");
-            const premiumStr = await SecureStore.getItemAsync("isPremium");
-            if (userStr) {
-                set({
-                    user: JSON.parse(userStr),
-                    isAuthenticated: true,
-                    isPremium: premiumStr === "true",
-                });
-            }
-        } catch {
-            // Sesión no disponible
-        }
     },
 }));

@@ -10,9 +10,12 @@ export interface Usuario {
 }
 
 // Login contra el endpoint /login de la API
-export const loginAction = async (email: string, password: string): Promise<{ user: Usuario; isPremium: boolean }> => {
+export const loginAction = async (
+    nombre: string,
+    password: string
+): Promise<{ user: Usuario; isPremium: boolean }> => {
     const { data } = await spotifyApi.post<Usuario & { isPremium: boolean }>("/login", {
-        email,
+        nombre,
         password,
     });
     const { isPremium, ...user } = data;
