@@ -2,11 +2,24 @@ import { spotifyApi } from "./api";
 
 export interface Usuario {
     id: number;
-    nombre: string;
-    apellidos: string;
+    username: string;
     email: string;
     password?: string;
-    foto?: string;
+    genero?: string | null;
+    fechaNacimiento?: string;
+    pais?: string | null;
+    codigoPostal?: string | null;
+    isPremium?: boolean;
+}
+
+export interface RegisterPayload {
+    username: string;
+    email: string;
+    password: string;
+    fechaNacimiento: string;
+    genero?: string | null;
+    pais?: string | null;
+    codigoPostal?: string | null;
 }
 
 // Login contra el endpoint /login de la API
@@ -18,13 +31,13 @@ export const loginAction = async (
         name,
         password,
     });
-    const { isPremium, ...user } = data;
+    const { isPremium = false, ...user } = data;
     return { user, isPremium };
 };
 
 // Registro de nuevo usuario
 export const registerAction = async (
-    userData: Omit<Usuario, "id">,
+    userData: RegisterPayload,
     premium = false
 ): Promise<Usuario> => {
     const { data } = await spotifyApi.post<Usuario>(

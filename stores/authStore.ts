@@ -3,10 +3,12 @@ import { create } from "zustand";
 
 interface User {
     id: number;
-    nombre: string;
-    apellidos: string;
+    username: string;
     email: string;
-    foto?: string;
+    genero?: string | null;
+    fechaNacimiento?: string;
+    pais?: string | null;
+    codigoPostal?: string | null;
 }
 
 interface AuthStore {

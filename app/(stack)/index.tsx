@@ -11,7 +11,7 @@ export default function HomeScreen() {
         <SafeAreaView className="flex-1 items-center justify-center bg-[#121212] px-8">
             <Text className="mb-2 text-xl font-semibold text-white">Inicio</Text>
             <Text className="mb-8 text-sm text-[#B3B3B3]">
-                {user ? `Bienvenido, ${user.nombre}` : "Sesión iniciada"}
+                {user ? `Bienvenido, ${user.username}` : "Sesión iniciada"}
             </Text>
             <Pressable className="rounded-full bg-[#1DB954] px-6 py-3" onPress={logout}>
                 <Text className="font-semibold text-black">Cerrar sesión</Text>
