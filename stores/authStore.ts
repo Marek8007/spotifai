@@ -1,0 +1,53 @@
+import * as SecureStore from "expo-secure-store";
+import { create } from "zustand";
+
+interface User {
+    id: number;
+    nombre: string;
+    apellidos: string;
+    email: string;
+    foto?: string;
+}
+
+interface AuthStore {
+    user: User | null;
+    isAuthenticated: boolean;
+    isPremium: boolean;
+    login: (user: User, isPremium: boolean) => Promise<void>;
+    logout: () => Promise<void>;
+    hydrate: () => Promise<void>;
+}
+
+export const useAuthStore = create<AuthStore>((set) => ({
+    user: null,
+    isAuthenticated: false,
+    isPremium: false,
+
+    login: async (user, isPremium) => {
+        await SecureStore.setItemAsync("user", JSON.stringify(user));
+        await SecureStore.setItemAsync("isPremium", String(isPremium));
+        set({ user, isAuthenticated: true, isPremium });
+    },
+
+    logout: async () => {
+        await SecureStore.deleteItemAsync("user");
+        await SecureStore.deleteItemAsync("isPremium");
+        set({ user: null, isAuthenticated: false, isPremium: false });
+    },
+
+    hydrate: async () => {
+        try {
+            const userStr = await SecureStore.getItemAsync("user");
+            const premiumStr = await SecureStore.getItemAsync("isPremium");
+            if (userStr) {
+                set({
+                    user: JSON.parse(userStr),
+                    isAuthenticated: true,
+                    isPremium: premiumStr === "true",
+                });
+            }
+        } catch {
+            // Sesión no disponible
+        }
+    },
+}));
