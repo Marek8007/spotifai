@@ -8,7 +8,6 @@ import {
     Alert,
     KeyboardAvoidingView,
     Platform,
-    StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
@@ -43,25 +42,23 @@ export default function LoginScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView className="flex-1 bg-[#121212]">
             <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={styles.inner}
+                className="flex-1 justify-center px-8"
             >
-                {/* Logo / Título */}
-                <View style={styles.header}>
+                <View className="mb-12 items-center gap-2">
                     <Ionicons name="musical-notes" size={48} color="#1DB954" />
-                    <Text style={styles.appName}>spotify</Text>
-                    <Text style={styles.subtitle}>Inicia sesión para continuar</Text>
+                    <Text className="text-4xl font-bold tracking-[1px] text-white">spotify</Text>
+                    <Text className="text-sm text-[#B3B3B3]">Inicia sesión para continuar</Text>
                 </View>
 
-                {/* Formulario */}
-                <View style={styles.form}>
-                    {/* Nombre de usuario */}
-                    <View style={styles.inputWrapper}>
-                        <Ionicons name="person-outline" size={20} color="#B3B3B3" style={styles.inputIcon} />
+                <View className="gap-4">
+                    <View className="h-[52px] flex-row items-center rounded-lg bg-[#282828] px-4">
+                        <View className="mr-3">
+                            <Ionicons name="person-outline" size={20} color="#B3B3B3" />
+                        </View>
                         <TextInput
-                            style={styles.input}
+                            className="flex-1 text-[15px] text-white"
                             placeholder="Nombre de usuario"
                             placeholderTextColor="#535353"
                             value={username}
@@ -71,11 +68,12 @@ export default function LoginScreen() {
                         />
                     </View>
 
-                    {/* Contraseña */}
-                    <View style={styles.inputWrapper}>
-                        <Ionicons name="lock-closed-outline" size={20} color="#B3B3B3" style={styles.inputIcon} />
+                    <View className="h-[52px] flex-row items-center rounded-lg bg-[#282828] px-4">
+                        <View className="mr-3">
+                            <Ionicons name="lock-closed-outline" size={20} color="#B3B3B3" />
+                        </View>
                         <TextInput
-                            style={styles.input}
+                            className="flex-1 text-[15px] text-white"
                             placeholder="Contraseña"
                             placeholderTextColor="#535353"
                             value={password}
@@ -85,7 +83,7 @@ export default function LoginScreen() {
                         />
                         <TouchableOpacity
                             onPress={() => setShowPassword(!showPassword)}
-                            style={styles.eyeIcon}
+                            className="p-1"
                         >
                             <Ionicons
                                 name={showPassword ? "eye-off-outline" : "eye-outline"}
@@ -95,9 +93,8 @@ export default function LoginScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    {/* Botón login */}
                     <TouchableOpacity
-                        style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+                        className={`mt-2 h-[52px] items-center justify-center rounded-full bg-[#1DB954] ${loading ? "opacity-60" : ""}`}
                         onPress={handleLogin}
                         disabled={loading}
                         activeOpacity={0.8}
@@ -105,99 +102,18 @@ export default function LoginScreen() {
                         {loading ? (
                             <ActivityIndicator color="#000000" />
                         ) : (
-                            <Text style={styles.loginButtonText}>Iniciar sesión</Text>
+                            <Text className="text-base font-bold tracking-[0.5px] text-black">Iniciar sesión</Text>
                         )}
                     </TouchableOpacity>
                 </View>
 
-                {/* Ir a Registro */}
-                <View style={styles.footer}>
-                    <Text style={styles.footerText}>¿No tienes cuenta?</Text>
+                <View className="mt-10 flex-row justify-center">
+                    <Text className="text-sm text-[#B3B3B3]">¿No tienes cuenta?</Text>
                     <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
-                        <Text style={styles.registerLink}> Regístrate</Text>
+                        <Text className="text-sm font-semibold text-[#1DB954]"> Regístrate</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#121212",
-    },
-    inner: {
-        flex: 1,
-        justifyContent: "center",
-        paddingHorizontal: 32,
-    },
-    header: {
-        alignItems: "center",
-        marginBottom: 48,
-        gap: 8,
-    },
-    appName: {
-        fontSize: 32,
-        fontWeight: "700",
-        color: "#FFFFFF",
-        letterSpacing: 1,
-    },
-    subtitle: {
-        fontSize: 14,
-        color: "#B3B3B3",
-    },
-    form: {
-        gap: 16,
-    },
-    inputWrapper: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#282828",
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        height: 52,
-    },
-    inputIcon: {
-        marginRight: 12,
-    },
-    input: {
-        flex: 1,
-        color: "#FFFFFF",
-        fontSize: 15,
-    },
-    eyeIcon: {
-        padding: 4,
-    },
-    loginButton: {
-        backgroundColor: "#1DB954",
-        borderRadius: 30,
-        height: 52,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 8,
-    },
-    loginButtonDisabled: {
-        opacity: 0.6,
-    },
-    loginButtonText: {
-        color: "#000000",
-        fontSize: 16,
-        fontWeight: "700",
-        letterSpacing: 0.5,
-    },
-    footer: {
-        flexDirection: "row",
-        justifyContent: "center",
-        marginTop: 40,
-    },
-    footerText: {
-        color: "#B3B3B3",
-        fontSize: 14,
-    },
-    registerLink: {
-        color: "#1DB954",
-        fontSize: 14,
-        fontWeight: "600",
-    },
-});
