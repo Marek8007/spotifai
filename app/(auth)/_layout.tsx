@@ -7,7 +7,7 @@ export default function AuthLayout() {
 
     useEffect(() => {
         if (isAuthenticated) {
-            router.replace("/(app)/(tabs)/home");
+            router.replace("/(stack)");
         }
     }, [isAuthenticated]);
 

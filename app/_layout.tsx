@@ -8,7 +8,7 @@ const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             retry: 1,
-            staleTime: 1000 * 60 * 5, // 5 minutos
+            staleTime: 1000 * 60 * 5,
         },
     },
 });
@@ -19,7 +19,7 @@ export default function RootLayout() {
             <StatusBar style="light" />
             <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="(auth)" />
-                <Stack.Screen name="(app)" />
+                <Stack.Screen name="(stack)" />
             </Stack>
         </QueryClientProvider>
     );

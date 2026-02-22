@@ -8,15 +8,15 @@ import {
     Alert,
     KeyboardAvoidingView,
     Platform,
+    Pressable,
     Text,
     TextInput,
-    TouchableOpacity,
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
-    const [username, setUsername] = useState("");
+    const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -24,16 +24,16 @@ export default function LoginScreen() {
     const login = useAuthStore((s) => s.login);
 
     const handleLogin = async () => {
-        if (!username.trim() || !password.trim()) {
-            Alert.alert("Error", "Introduce tu nombre de usuario y contraseña");
+        if (!name.trim() || !password.trim()) {
+            Alert.alert("Error", "Introduce tu nombre y contraseña");
             return;
         }
 
         setLoading(true);
         try {
-            const { user, isPremium } = await loginAction(username.trim(), password);
+            const { user, isPremium } = await loginAction(name.trim(), password);
             await login(user, isPremium);
-            router.replace("/(app)/(tabs)/home");
+            router.replace("/(stack)");
         } catch (error: any) {
             Alert.alert("Error", error.message ?? "No se pudo iniciar sesión");
         } finally {
@@ -44,6 +44,7 @@ export default function LoginScreen() {
     return (
         <SafeAreaView className="flex-1 bg-[#121212]">
             <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
                 className="flex-1 justify-center px-8"
             >
                 <View className="mb-12 items-center gap-2">
@@ -59,10 +60,10 @@ export default function LoginScreen() {
                         </View>
                         <TextInput
                             className="flex-1 text-[15px] text-white"
-                            placeholder="Nombre de usuario"
+                            placeholder="Nombre"
                             placeholderTextColor="#535353"
-                            value={username}
-                            onChangeText={setUsername}
+                            value={name}
+                            onChangeText={setName}
                             autoCapitalize="none"
                             autoCorrect={false}
                         />
@@ -81,7 +82,7 @@ export default function LoginScreen() {
                             secureTextEntry={!showPassword}
                             autoCapitalize="none"
                         />
-                        <TouchableOpacity
+                        <Pressable
                             onPress={() => setShowPassword(!showPassword)}
                             className="p-1"
                         >
@@ -90,28 +91,27 @@ export default function LoginScreen() {
                                 size={20}
                                 color="#B3B3B3"
                             />
-                        </TouchableOpacity>
+                        </Pressable>
                     </View>
 
-                    <TouchableOpacity
+                    <Pressable
                         className={`mt-2 h-[52px] items-center justify-center rounded-full bg-[#1DB954] ${loading ? "opacity-60" : ""}`}
                         onPress={handleLogin}
                         disabled={loading}
-                        activeOpacity={0.8}
                     >
                         {loading ? (
                             <ActivityIndicator color="#000000" />
                         ) : (
                             <Text className="text-base font-bold tracking-[0.5px] text-black">Iniciar sesión</Text>
                         )}
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
 
                 <View className="mt-10 flex-row justify-center">
                     <Text className="text-sm text-[#B3B3B3]">¿No tienes cuenta?</Text>
-                    <TouchableOpacity onPress={() => router.push("/(auth)/register")}>
+                    <Pressable onPress={() => router.push("/(auth)/register")}>
                         <Text className="text-sm font-semibold text-[#1DB954]"> Regístrate</Text>
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
             </KeyboardAvoidingView>
         </SafeAreaView>

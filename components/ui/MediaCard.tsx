@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 
 export type MediaType = "playlist" | "artista" | "album" | "podcast" | "cancion";
 
@@ -41,7 +41,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
 
     if (compact) {
         return (
-            <TouchableOpacity onPress={onPress} className="flex-row items-center px-4 py-2" activeOpacity={0.7}>
+            <Pressable onPress={onPress} className="flex-row items-center px-4 py-2">
                 {imageUrl ? (
                     <Image source={{ uri: imageUrl }} className="mr-3 h-[50px] w-[50px] rounded bg-[#282828]" />
                 ) : (
@@ -62,18 +62,18 @@ export const MediaCard: React.FC<MediaCardProps> = ({
                 </View>
 
                 {type === "cancion" && onPlusPress && (
-                    <TouchableOpacity onPress={onPlusPress} className="mr-2 p-1">
+                    <Pressable onPress={onPlusPress} className="mr-2 p-1">
                         <Ionicons name="add-circle-outline" size={24} color="#B3B3B3" />
-                    </TouchableOpacity>
+                    </Pressable>
                 )}
 
                 <Ionicons name="chevron-forward" size={16} color="#535353" />
-            </TouchableOpacity>
+            </Pressable>
         );
     }
 
     return (
-        <TouchableOpacity onPress={onPress} className="mr-4 w-[140px]" activeOpacity={0.7}>
+        <Pressable onPress={onPress} className="mr-4 w-[140px]">
             {imageUrl ? (
                 <Image source={{ uri: imageUrl }} className="mb-2 h-[140px] w-[140px] rounded-lg bg-[#282828]" />
             ) : (
@@ -90,6 +90,6 @@ export const MediaCard: React.FC<MediaCardProps> = ({
                     {subtitle}
                 </Text>
             )}
-        </TouchableOpacity>
+        </Pressable>
     );
 };
