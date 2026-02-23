@@ -6,7 +6,7 @@ interface User {
     username: string;
     email: string;
     genero?: string | null;
-    fechaNacimiento?: string;
+    fechaNacimiento?: string;   
     pais?: string | null;
     codigoPostal?: string | null;
 }

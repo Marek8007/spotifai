@@ -53,7 +53,13 @@ export default function RegisterScreen() {
                 { text: "Ir al login", onPress: () => router.replace("/(auth)/login") },
             ]);
         } catch (error: any) {
-            Alert.alert("Error", error?.response?.data ?? "No se pudo registrar el usuario");
+            const apiMessage =
+                typeof error?.response?.data === "string"
+                    ? error.response.data
+                    : error?.response?.data?.message ??
+                      error?.message ??
+                      "No se pudo registrar el usuario";
+            Alert.alert("Error", String(apiMessage));
         }
     };
 
