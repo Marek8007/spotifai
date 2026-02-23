@@ -30,7 +30,7 @@ export default function LoginScreen() {
         try {
             const { user, isPremium } = await loginAction(name.trim(), password);
             await login(user, isPremium);
-            router.replace("/(stack)");
+            router.replace("/(drawer)/(tabs)/home");
         } catch (error: any) {
             Alert.alert("Error", error.message ?? "No se pudo iniciar sesión");
         }
