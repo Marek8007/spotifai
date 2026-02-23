@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://10.0.2.2:8082";
+const BASE_URL = "http://10.249.48.27:8082";
 
 export const spotifyApi = axios.create({
     baseURL: BASE_URL,
