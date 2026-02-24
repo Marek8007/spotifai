@@ -5,16 +5,16 @@ export default function TabsLayout() {
     return (
         <Tabs screenOptions={{ headerShown: false }}>
             <Tabs.Screen
-                name="home"
+                name="home/index"
                 options={{
                     title: "Home",
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="home-outline" size={size} color={color} />
+                        <Ionicons name="home" size={size} color={color} />
                     ),
                 }}
             />
             <Tabs.Screen
-                name="search"
+                name="search/index"
                 options={{
                     title: "Buscar",
                     tabBarIcon: ({ color, size }) => (
@@ -23,7 +23,7 @@ export default function TabsLayout() {
                 }}
             />
             <Tabs.Screen
-                name="library"
+                name="library/index"
                 options={{
                     title: "Biblioteca",
                     tabBarIcon: ({ color, size }) => (
@@ -32,7 +32,7 @@ export default function TabsLayout() {
                 }}
             />
             <Tabs.Screen
-                name="add"
+                name="add/index"
                 options={{
                     title: "Añadir",
                     tabBarIcon: ({ color, size }) => (
