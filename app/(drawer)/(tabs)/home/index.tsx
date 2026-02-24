@@ -78,9 +78,7 @@ export default function HomeScreen() {
                                     id={item.id}
                                     type="playlist"
                                     title={item.nombre}
-                                    subtitle={
-                                        item.numeroCanciones ? `${item.numeroCanciones} canciones` : "Playlist"
-                                    }
+                                    subtitle={item.titulo ?? "Sin título"}
                                     imageUrl={item.foto}
                                 />
                             )}

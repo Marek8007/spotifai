@@ -3,6 +3,7 @@ import { spotifyApi } from "./api";
 export interface Playlist {
     id: number;
     nombre: string;
+    titulo?: string;
     descripcion?: string;
     foto?: string;
     numeroCanciones?: number;
