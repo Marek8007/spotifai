@@ -20,11 +20,10 @@ export default function RegisterScreen() {
     const [fechaNacimiento, setFechaNacimiento] = useState("");
 
     const isEmailValid = (value: string) => /.+@.+\..+/.test(value);
-    const isDateValid = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value);
 
     const handleRegister = async () => {
-        if (!username.trim() || !email.trim() || !password.trim() || !fechaNacimiento.trim()) {
-            Alert.alert("Error", "Completa todos los campos obligatorios");
+        if (!username.trim() || !email.trim() || !password.trim()) {
+            Alert.alert("Error", "Completa usuario, email y contraseña");
             return;
         }
 
@@ -33,17 +32,13 @@ export default function RegisterScreen() {
             return;
         }
 
-        if (!isDateValid(fechaNacimiento.trim())) {
-            Alert.alert("Error", "Fecha inválida. Usa formato YYYY-MM-DD");
-            return;
-        }
-
         try {
+            const birthDate = fechaNacimiento.trim() || "2000-01-01";
             await registerAction({
                 username: username.trim(),
                 email: email.trim(),
                 password,
-                fechaNacimiento: fechaNacimiento.trim(),
+                fechaNacimiento: birthDate,
                 genero: null,
                 pais: null,
                 codigoPostal: null,
