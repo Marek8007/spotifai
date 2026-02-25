@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import { getRandomMediaImage } from "@/constants/randomMediaImages";
+import { useMemo } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 
 export type MediaType = "playlist" | "artista" | "album" | "podcast" | "cancion";
@@ -15,7 +16,7 @@ export interface MediaCardProps {
     compact?: boolean;
 }
 
-export const MediaCard: React.FC<MediaCardProps> = ({
+export function MediaCard({
     title,
     subtitle,
     imageUrl,
@@ -23,31 +24,22 @@ export const MediaCard: React.FC<MediaCardProps> = ({
     onPress,
     onPlusPress,
     compact = false,
-}) => {
-    const getIcon = (): keyof typeof Ionicons.glyphMap => {
-        switch (type) {
-            case "playlist":
-                return "musical-notes";
-            case "artista":
-                return "person";
-            case "album":
-                return "disc";
-            case "podcast":
-                return "mic";
-            case "cancion":
-                return "musical-note";
-        }
-    };
+}: MediaCardProps) {
+    const shouldUseRandomImage = type === "cancion" || type === "playlist" || type === "album";
+    const randomImage = useMemo(() => getRandomMediaImage(), []);
+    const imageSource = shouldUseRandomImage
+        ? randomImage
+        : imageUrl
+          ? { uri: imageUrl }
+          : null;
 
     if (compact) {
         return (
             <Pressable onPress={onPress} className="flex-row items-center px-4 py-2">
-                {imageUrl ? (
-                    <Image source={{ uri: imageUrl }} className="mr-3 h-[50px] w-[50px] rounded bg-[#282828]" />
+                {imageSource ? (
+                    <Image source={imageSource} className="mr-3 h-[50px] w-[50px] rounded bg-[#282828]" />
                 ) : (
-                    <View className="mr-3 h-[50px] w-[50px] items-center justify-center rounded bg-[#282828]">
-                        <Ionicons name={getIcon()} size={20} color="#B3B3B3" />
-                    </View>
+                    <View className="mr-3 h-[50px] w-[50px] rounded bg-[#282828]" />
                 )}
 
                 <View className="flex-1">
@@ -74,12 +66,10 @@ export const MediaCard: React.FC<MediaCardProps> = ({
 
     return (
         <Pressable onPress={onPress} className="mr-4 w-[140px]">
-            {imageUrl ? (
-                <Image source={{ uri: imageUrl }} className="mb-2 h-[140px] w-[140px] rounded-lg bg-[#282828]" />
+            {imageSource ? (
+                <Image source={imageSource} className="mb-2 h-[140px] w-[140px] rounded-lg bg-[#282828]" />
             ) : (
-                <View className="mb-2 h-[140px] w-[140px] items-center justify-center rounded-lg bg-[#282828]">
-                    <Ionicons name={getIcon()} size={32} color="#B3B3B3" />
-                </View>
+                <View className="mb-2 h-[140px] w-[140px] rounded-lg bg-[#282828]" />
             )}
 
             <Text className="text-sm font-semibold text-white" numberOfLines={2}>
@@ -92,4 +82,4 @@ export const MediaCard: React.FC<MediaCardProps> = ({
             )}
         </Pressable>
     );
-};
+}
