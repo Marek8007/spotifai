@@ -1,12 +1,3 @@
-import { useAuthStore } from "@/stores/authStore";
-import { Redirect } from "expo-router";
+import AppIndexRoute from "@/components/routes/AppIndexRoute";
 
-export default function Index() {
-    const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-
-    if (isAuthenticated) {
-        return <Redirect href="/(drawer)/(tabs)/home" />;
-    }
-
-    return <Redirect href="/(auth)/login" />;
-}
+export default AppIndexRoute;

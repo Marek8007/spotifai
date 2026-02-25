@@ -12,6 +12,8 @@ export interface MediaCardProps {
     type: MediaType;
     onPress?: () => void;
     onPlusPress?: () => void;
+    isPlusFilled?: boolean;
+    showChevron?: boolean;
     compact?: boolean;
 }
 
@@ -22,6 +24,8 @@ export function MediaCard({
     type,
     onPress,
     onPlusPress,
+    isPlusFilled = false,
+    showChevron = true,
     compact = false,
 }: MediaCardProps) {
     const randomImage = getRandomMediaImage();
@@ -49,11 +53,15 @@ export function MediaCard({
 
                 {type === "cancion" && onPlusPress && (
                     <Pressable onPress={onPlusPress} className="mr-2 p-1">
-                        <Ionicons name="add-circle-outline" size={24} color="#B3B3B3" />
+                        <Ionicons
+                            name={isPlusFilled ? "add-circle" : "add-circle-outline"}
+                            size={24}
+                            color={isPlusFilled ? "#1DB954" : "#B3B3B3"}
+                        />
                     </Pressable>
                 )}
 
-                <Ionicons name="chevron-forward" size={16} color="#535353" />
+                {showChevron && <Ionicons name="chevron-forward" size={16} color="#535353" />}
             </Pressable>
         );
     }

@@ -1,43 +1,14 @@
-import { getFollowedAlbumsAction } from "@/actions/album.actions";
-import { getFollowedPlaylistsAction } from "@/actions/playlist.actions";
-import { getSavedSongsAction } from "@/actions/song.actions";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MediaCard } from "@/components/ui/MediaCard";
-import { useAuthStore } from "@/stores/authStore";
-import { useQuery } from "@tanstack/react-query";
-import { router } from "expo-router";
-import React from "react";
+import { useHomeRoute } from "@/hooks/useHomeRoute";
+import { Ionicons } from "@expo/vector-icons";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
-    const user = useAuthStore((s) => s.user);
-    const logout = useAuthStore((s) => s.logout);
-    const userId = user?.id;
-    const handleLogout = async () => {
-        await logout();
-        router.replace("/(auth)/login");
-    };
+    const home = useHomeRoute();
 
-    const playlistsQuery = useQuery({
-        queryKey: ["home", "followed-playlists", userId],
-        queryFn: () => getFollowedPlaylistsAction(userId as number),
-        enabled: !!userId,
-    });
-
-    const albumsQuery = useQuery({
-        queryKey: ["home", "followed-albums", userId],
-        queryFn: () => getFollowedAlbumsAction(userId as number),
-        enabled: !!userId,
-    });
-
-    const songsQuery = useQuery({
-        queryKey: ["home", "saved-songs", userId],
-        queryFn: () => getSavedSongsAction(userId as number),
-        enabled: !!userId,
-    });
-
-    if (!userId) {
+    if (!home.hasUser) {
         return (
             <SafeAreaView className="flex-1 bg-[#121212]">
                 <EmptyState message="No hay sesión activa" />
@@ -48,45 +19,52 @@ export default function HomeScreen() {
     return (
         <SafeAreaView className="flex-1 bg-[#121212]">
             <FlatList
-                data={songsQuery.data ?? []}
+                data={home.savedSongs}
                 keyExtractor={(item) => `song-${item.id}`}
-                renderItem={({ item }) => (
-                    <MediaCard
-                        id={item.id}
-                        type="cancion"
-                        title={item.titulo}
-                        compact
-                    />
-                )}
+                renderItem={({ item }) => <MediaCard id={item.id} type="cancion" title={item.titulo} compact />}
                 ListHeaderComponent={
                     <View className="px-4 pb-4 pt-4">
                         <View className="mb-4 flex-row items-center justify-between">
                             <View>
                                 <Text className="text-2xl font-bold text-white">Inicio</Text>
                                 <Text className="mt-1 text-sm text-[#B3B3B3]">
-                                    {user ? `Bienvenido, ${user.username}` : "Sesión iniciada"}
+                                    {home.user ? `Bienvenido, ${home.user.username}` : "Sesión iniciada"}
                                 </Text>
                             </View>
-                            <Pressable className="rounded-full bg-[#1DB954] px-4 py-2" onPress={handleLogout}>
+                            <Pressable className="rounded-full bg-[#1DB954] px-4 py-2" onPress={home.handleLogout}>
                                 <Text className="font-semibold text-black">Cerrar sesión</Text>
                             </Pressable>
                         </View>
 
                         <Text className="mb-3 text-lg font-semibold text-white">Playlists seguidas</Text>
-                        {playlistsQuery.isError && (
+                        {home.playlistsError && (
                             <Text className="mb-4 text-sm text-red-400">Error cargando playlists</Text>
                         )}
-                        {!playlistsQuery.isError &&
-                            (playlistsQuery.data?.length ? (
+                        {!home.playlistsError &&
+                            (home.visiblePlaylists.length ? (
                                 <FlatList
                                     horizontal
-                                    data={playlistsQuery.data}
+                                    data={home.visiblePlaylists}
                                     keyExtractor={(item) => `playlist-${item.id}`}
+                                    ListHeaderComponent={
+                                        <Pressable onPress={home.openLikedSongs} className="mr-4 w-[140px]">
+                                            <View className="mb-2 h-[140px] w-[140px] items-center justify-center rounded-lg bg-[#5C3BAA]">
+                                                <Ionicons name="heart" size={42} color="#FFFFFF" />
+                                            </View>
+                                            <Text className="text-sm font-semibold text-white" numberOfLines={2}>
+                                                Canciones que te gustan
+                                            </Text>
+                                            <Text className="mt-0.5 text-xs text-[#B3B3B3]" numberOfLines={1}>
+                                                {home.savedSongs.length} canciones
+                                            </Text>
+                                        </Pressable>
+                                    }
                                     renderItem={({ item }) => (
                                         <MediaCard
                                             id={item.id}
                                             type="playlist"
                                             title={item.titulo}
+                                            onPress={() => home.openPlaylist(item.id)}
                                         />
                                     )}
                                     showsHorizontalScrollIndicator={false}
@@ -97,14 +75,12 @@ export default function HomeScreen() {
                             ))}
 
                         <Text className="mb-3 mt-6 text-lg font-semibold text-white">Álbumes seguidos</Text>
-                        {albumsQuery.isError && (
-                            <Text className="mb-4 text-sm text-red-400">Error cargando álbumes</Text>
-                        )}
-                        {!albumsQuery.isError &&
-                            (albumsQuery.data?.length ? (
+                        {home.albumsError && <Text className="mb-4 text-sm text-red-400">Error cargando álbumes</Text>}
+                        {!home.albumsError &&
+                            (home.followedAlbums.length ? (
                                 <FlatList
                                     horizontal
-                                    data={albumsQuery.data}
+                                    data={home.followedAlbums}
                                     keyExtractor={(item) => `album-${item.id}`}
                                     renderItem={({ item }) => (
                                         <MediaCard
@@ -113,6 +89,7 @@ export default function HomeScreen() {
                                             title={item.titulo}
                                             subtitle={item.artista?.nombre}
                                             imageUrl={item.imagen ?? undefined}
+                                            onPress={() => home.openAlbum(item.id)}
                                         />
                                     )}
                                     showsHorizontalScrollIndicator={false}
@@ -123,19 +100,17 @@ export default function HomeScreen() {
                             ))}
 
                         <Text className="mb-3 mt-6 text-lg font-semibold text-white">Canciones que te gustan</Text>
-                        {songsQuery.isError && (
-                            <Text className="mb-4 text-sm text-red-400">
-                                Error cargando canciones guardadas
-                            </Text>
+                        {home.songsError && (
+                            <Text className="mb-4 text-sm text-red-400">Error cargando canciones guardadas</Text>
                         )}
-                        {!songsQuery.isError && !songsQuery.data?.length && (
+                        {!home.songsError && !home.savedSongs.length && (
                             <Text className="mb-4 text-sm text-[#B3B3B3]">No tienes canciones guardadas</Text>
                         )}
                     </View>
                 }
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 24, paddingHorizontal: 16 }}
-                ListEmptyComponent={songsQuery.isError ? null : <View />}
+                ListEmptyComponent={home.songsError ? null : <View />}
             />
         </SafeAreaView>
     );
