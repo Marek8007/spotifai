@@ -54,9 +54,7 @@ export default function HomeScreen() {
                     <MediaCard
                         id={item.id}
                         type="cancion"
-                        title={item.nombre}
-                        subtitle={item.album?.artista?.nombre ?? item.album?.nombre}
-                        imageUrl={item.foto}
+                        title={item.titulo}
                         compact
                     />
                 )}
@@ -88,9 +86,7 @@ export default function HomeScreen() {
                                         <MediaCard
                                             id={item.id}
                                             type="playlist"
-                                            title={item.nombre}
-                                            subtitle={item.titulo ?? "Sin título"}
-                                            imageUrl={item.foto}
+                                            title={item.titulo}
                                         />
                                     )}
                                     showsHorizontalScrollIndicator={false}
@@ -114,9 +110,9 @@ export default function HomeScreen() {
                                         <MediaCard
                                             id={item.id}
                                             type="album"
-                                            title={item.nombre}
-                                            subtitle={item.artista?.nombre ?? "Álbum"}
-                                            imageUrl={item.foto}
+                                            title={item.titulo}
+                                            subtitle={item.artista?.nombre}
+                                            imageUrl={item.imagen ?? undefined}
                                         />
                                     )}
                                     showsHorizontalScrollIndicator={false}

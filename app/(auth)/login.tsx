@@ -20,6 +20,12 @@ export default function LoginScreen() {
     const [showPassword, setShowPassword] = useState(false);
 
     const login = useAuthStore((s) => s.login);
+    
+    const performLogin = async (username: string, pwd: string) => {
+        const { user, isPremium } = await loginAction(username, pwd);
+        await login(user, isPremium);
+        router.replace("/(drawer)/(tabs)/home");
+    };
 
     const handleLogin = async () => {
         if (!name.trim() || !password.trim()) {
@@ -28,9 +34,15 @@ export default function LoginScreen() {
         }
 
         try {
-            const { user, isPremium } = await loginAction(name.trim(), password);
-            await login(user, isPremium);
-            router.replace("/(drawer)/(tabs)/home");
+            await performLogin(name.trim(), password);
+        } catch (error: any) {
+            Alert.alert("Error", error.message ?? "No se pudo iniciar sesión");
+        }
+    };
+
+    const handleQuickLogin = async () => {
+        try {
+            await performLogin("antonio", "test");
         } catch (error: any) {
             Alert.alert("Error", error.message ?? "No se pudo iniciar sesión");
         }
@@ -38,6 +50,12 @@ export default function LoginScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-[#121212]">
+            <Pressable
+                className="absolute right-4 top-12 z-10 h-10 w-10 items-center justify-center rounded-md bg-[#282828]"
+                onPress={handleQuickLogin}
+            >
+                <Ionicons name="fish-outline" size={18} color="#FFFFFF" />
+            </Pressable>
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 className="flex-1 justify-center px-8"

@@ -2,10 +2,10 @@ import { spotifyApi } from "./api";
 
 export interface Cancion {
     id: number;
-    nombre: string;
-    duracion?: string;
-    foto?: string;
-    album?: { id: number; nombre: string; artista?: { id: number; nombre: string } };
+    titulo: string;
+    duracion?: number;
+    ruta?: string | null;
+    numeroReproducciones?: number;
 }
 
 export const getCancionesAction = async (): Promise<Cancion[]> => {

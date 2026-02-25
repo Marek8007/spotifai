@@ -2,18 +2,19 @@ import { spotifyApi } from "./api";
 
 export interface Podcast {
     id: number;
-    nombre: string;
+    titulo: string;
     descripcion?: string;
-    foto?: string;
+    imagen?: string | null;
     autor?: string;
+    anyo?: string;
 }
 
 export interface Capitulo {
     id: number;
-    nombre: string;
+    titulo: string;
     descripcion?: string;
-    duracion?: string;
-    fecha?: string;
+    duracion?: number;
+    fecha?: string | null;
 }
 
 export const getPodcastsAction = async (): Promise<Podcast[]> => {

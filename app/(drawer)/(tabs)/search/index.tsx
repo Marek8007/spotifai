@@ -26,8 +26,6 @@ export default function SearchScreen() {
     const [query, setQuery] = useState("");
     const normalizedQuery = query.trim().toLowerCase();
     const user = useAuthStore((s) => s.user);
-    const getSearchableText = (item: any) =>
-        String(item?.nombre ?? item?.titulo ?? "").toLowerCase();
 
     const userPlaylistsQuery = useQuery({
         queryKey: ["search", "user-playlists", user?.id],
@@ -50,50 +48,43 @@ export default function SearchScreen() {
             ]);
 
             const playlistResults: SearchResult[] = playlists
-                .filter((item) => getSearchableText(item).includes(text))
+                .filter((item) => item.titulo.toLowerCase().includes(text))
                 .map((item) => ({
                     id: item.id,
-                    title: item.nombre ?? item.titulo ?? "Playlist",
-                    subtitle: item.titulo ?? item.nombre,
+                    title: item.titulo,
                     type: "playlist",
                 }));
 
             const artistResults: SearchResult[] = artistas
-                .filter((item) => getSearchableText(item).includes(text))
+                .filter((item) => item.nombre.toLowerCase().includes(text))
                 .map((item) => ({
                     id: item.id,
-                    title: item.nombre ?? "Artista",
+                    title: item.nombre,
                     type: "artista",
                 }));
 
             const albumResults: SearchResult[] = albums
-                .filter((item) => getSearchableText(item).includes(text))
+                .filter((item) => item.titulo.toLowerCase().includes(text))
                 .map((item) => ({
                     id: item.id,
-                    title: item.nombre ?? (item as any).titulo ?? "Álbum",
-                    subtitle: item.artista?.nombre ?? (item.artista as any)?.titulo,
+                    title: item.titulo,
                     type: "album",
                 }));
 
             const songResults: SearchResult[] = canciones
-                .filter((item) => getSearchableText(item).includes(text))
+                .filter((item) => item.titulo.toLowerCase().includes(text))
                 .map((item) => ({
                     id: item.id,
-                    title: item.nombre ?? (item as any).titulo ?? "Canción",
-                    subtitle:
-                        item.album?.artista?.nombre ??
-                        (item.album?.artista as any)?.titulo ??
-                        item.album?.nombre ??
-                        (item.album as any)?.titulo,
+                    title: item.titulo,
                     type: "cancion",
                 }));
 
             const podcastResults: SearchResult[] = podcasts
-                .filter((item) => getSearchableText(item).includes(text))
+                .filter((item) => item.titulo.toLowerCase().includes(text))
                 .map((item) => ({
                     id: item.id,
-                    title: item.nombre ?? (item as any).titulo ?? "Podcast",
-                    subtitle: item.autor ?? item.descripcion,
+                    title: item.titulo,
+                    subtitle: item.descripcion,
                     type: "podcast",
                 }));
 
@@ -122,7 +113,7 @@ export default function SearchScreen() {
 
         try {
             await addSongToPlaylistAction(targetPlaylist.id, songId, user.id);
-            Alert.alert("Ok", `Canción añadida a ${targetPlaylist.nombre}`);
+            Alert.alert("Ok", `Canción añadida a ${targetPlaylist.titulo}`);
         } catch {
             Alert.alert("Error", "No se pudo añadir la canción a la playlist");
         }
@@ -163,31 +154,31 @@ export default function SearchScreen() {
                 <View className="flex-1 px-4 pt-2">
                     <View className="mb-3 flex-row gap-3">
                         <Pressable
-                            className="flex-1 rounded-lg bg-[#1DB954] p-4"
+                            className="h-[74px] flex-1 items-start justify-center rounded-xl bg-[#8D67AB] px-5"
                             onPress={() => router.push("/(stack)/playlists")}
                         >
-                            <Text className="font-semibold text-black">Playlists</Text>
+                            <Text className="text-base font-semibold text-white">Playlists</Text>
                         </Pressable>
                         <Pressable
-                            className="flex-1 rounded-lg bg-[#1DB954] p-4"
+                            className="h-[74px] flex-1 items-start justify-center rounded-xl bg-[#27856A] px-5"
                             onPress={() => router.push("/(stack)/podcasts")}
                         >
-                            <Text className="font-semibold text-black">Podcasts</Text>
+                            <Text className="text-base font-semibold text-white">Podcasts</Text>
                         </Pressable>
                     </View>
 
                     <View className="flex-row gap-3">
                         <Pressable
-                            className="flex-1 rounded-lg bg-[#1DB954] p-4"
+                            className="h-[74px] flex-1 items-start justify-center rounded-xl bg-[#E8115B] px-5"
                             onPress={() => router.push("/(stack)/artists")}
                         >
-                            <Text className="font-semibold text-black">Artistas</Text>
+                            <Text className="text-base font-semibold text-white">Artistas</Text>
                         </Pressable>
                         <Pressable
-                            className="flex-1 rounded-lg bg-[#1DB954] p-4"
+                            className="h-[74px] flex-1 items-start justify-center rounded-xl bg-[#509BF5] px-5"
                             onPress={() => router.push("/(stack)/albums")}
                         >
-                            <Text className="font-semibold text-black">Álbumes</Text>
+                            <Text className="text-base font-semibold text-white">Álbumes</Text>
                         </Pressable>
                     </View>
                 </View>

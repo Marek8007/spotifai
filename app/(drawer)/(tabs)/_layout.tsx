@@ -38,7 +38,7 @@ export default function TabsLayout() {
                 }}
             />
             <Tabs.Screen
-                name="search"
+                name="search/index"
                 options={{
                     title: "Buscar",
                     tabBarIcon: ({ color, size }) => (

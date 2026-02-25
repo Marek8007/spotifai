@@ -1,9 +1,10 @@
+import { Album } from "./album.actions";
 import { spotifyApi } from "./api";
 
 export interface Artista {
     id: number;
     nombre: string;
-    foto?: string;
+    imagen?: string | null;
 }
 
 export const getArtistasAction = async (): Promise<Artista[]> => {
@@ -16,8 +17,8 @@ export const getArtistaAction = async (id: number): Promise<Artista> => {
     return data;
 };
 
-export const getArtistaAlbumsAction = async (id: number): Promise<any[]> => {
-    const { data } = await spotifyApi.get(`/artistas/${id}/albums`);
+export const getArtistaAlbumsAction = async (id: number): Promise<Album[]> => {
+    const { data } = await spotifyApi.get<Album[]>(`/artistas/${id}/albums`);
     return data;
 };
 

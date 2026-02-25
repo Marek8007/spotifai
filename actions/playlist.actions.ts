@@ -2,20 +2,17 @@ import { spotifyApi } from "./api";
 
 export interface Playlist {
     id: number;
-    nombre: string;
-    titulo?: string;
-    descripcion?: string;
-    foto?: string;
+    titulo: string;
     numeroCanciones?: number;
     fechaCreacion?: string;
 }
 
 export interface Cancion {
     id: number;
-    nombre: string;
-    duracion?: string;
-    foto?: string;
-    album?: { id: number; nombre: string; artista?: { nombre: string } };
+    titulo: string;
+    duracion?: number;
+    ruta?: string | null;
+    numeroReproducciones?: number;
 }
 
 // Todas las playlists
@@ -39,7 +36,7 @@ export const getUserPlaylistsAction = async (userId: number): Promise<Playlist[]
 // Crear playlist para usuario
 export const createPlaylistAction = async (
     userId: number,
-    playlist: { nombre: string; descripcion?: string }
+    playlist: { titulo: string }
 ): Promise<void> => {
     await spotifyApi.post(`/usuarios/${userId}/playlist`, playlist);
 };
@@ -61,9 +58,9 @@ export const unfollowPlaylistAction = async (userId: number, playlistId: number)
 };
 
 // Canciones de una playlist
-export const getPlaylistSongsAction = async (playlistId: number): Promise<any[]> => {
-    const { data } = await spotifyApi.get(`/playlist/${playlistId}/canciones`);
-    return data;
+export const getPlaylistSongsAction = async (playlistId: number): Promise<Cancion[]> => {
+    const { data } = await spotifyApi.get<{ cancion: Cancion }[]>(`/playlist/${playlistId}/canciones`);
+    return data.map((item) => item.cancion);
 };
 
 // Añadir canción a playlist
