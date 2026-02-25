@@ -22,6 +22,7 @@ export default function RootLayout() {
                 <Stack screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="(auth)" />
                     <Stack.Screen name="(drawer)" />
+                    <Stack.Screen name="(stack)" />
                 </Stack>
             </QueryClientProvider>
         </GestureHandlerRootView>

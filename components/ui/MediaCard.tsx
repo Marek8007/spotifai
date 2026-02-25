@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import { getRandomMediaImage } from "@/constants/randomMediaImages";
-import { useMemo } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 
 export type MediaType = "playlist" | "artista" | "album" | "podcast" | "cancion";
@@ -25,13 +24,8 @@ export function MediaCard({
     onPlusPress,
     compact = false,
 }: MediaCardProps) {
-    const shouldUseRandomImage = type === "cancion" || type === "playlist" || type === "album";
-    const randomImage = useMemo(() => getRandomMediaImage(), []);
-    const imageSource = shouldUseRandomImage
-        ? randomImage
-        : imageUrl
-          ? { uri: imageUrl }
-          : null;
+    const randomImage = getRandomMediaImage();
+    const imageSource = randomImage;
 
     if (compact) {
         return (

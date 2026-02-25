@@ -1,14 +1,222 @@
-import React from "react";
-import { Text, View } from "react-native";
+import { getAlbumsAction } from "@/actions/album.actions";
+import { getArtistasAction } from "@/actions/artist.actions";
+import {
+    addSongToPlaylistAction,
+    getPlaylistsAction,
+    getUserPlaylistsAction,
+} from "@/actions/playlist.actions";
+import { getPodcastsAction } from "@/actions/podcast.actions";
+import { getCancionesAction } from "@/actions/song.actions";
+import { MediaCard, MediaType } from "@/components/ui/MediaCard";
+import { useAuthStore } from "@/stores/authStore";
+import { useQuery } from "@tanstack/react-query";
+import { router } from "expo-router";
+import React, { useState } from "react";
+import { Alert, FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+type SearchResult = {
+    id: number;
+    title: string;
+    subtitle?: string;
+    type: MediaType;
+};
+
 export default function SearchScreen() {
+    const [query, setQuery] = useState("");
+    const normalizedQuery = query.trim().toLowerCase();
+    const user = useAuthStore((s) => s.user);
+    const getSearchableText = (item: any) =>
+        String(item?.nombre ?? item?.titulo ?? "").toLowerCase();
+
+    const userPlaylistsQuery = useQuery({
+        queryKey: ["search", "user-playlists", user?.id],
+        queryFn: () => getUserPlaylistsAction(user?.id as number),
+        enabled: !!user?.id,
+    });
+
+    const searchQuery = useQuery({
+        queryKey: ["search", normalizedQuery],
+        queryFn: async () => {
+            const text = normalizedQuery;
+            if (text.length < 3) return [] as SearchResult[];
+
+            const [playlists, artistas, albums, canciones, podcasts] = await Promise.all([
+                getPlaylistsAction().catch(() => []),
+                getArtistasAction().catch(() => []),
+                getAlbumsAction().catch(() => []),
+                getCancionesAction().catch(() => []),
+                getPodcastsAction().catch(() => []),
+            ]);
+
+            const playlistResults: SearchResult[] = playlists
+                .filter((item) => getSearchableText(item).includes(text))
+                .map((item) => ({
+                    id: item.id,
+                    title: item.nombre ?? item.titulo ?? "Playlist",
+                    subtitle: item.titulo ?? item.nombre,
+                    type: "playlist",
+                }));
+
+            const artistResults: SearchResult[] = artistas
+                .filter((item) => getSearchableText(item).includes(text))
+                .map((item) => ({
+                    id: item.id,
+                    title: item.nombre ?? "Artista",
+                    type: "artista",
+                }));
+
+            const albumResults: SearchResult[] = albums
+                .filter((item) => getSearchableText(item).includes(text))
+                .map((item) => ({
+                    id: item.id,
+                    title: item.nombre ?? (item as any).titulo ?? "Álbum",
+                    subtitle: item.artista?.nombre ?? (item.artista as any)?.titulo,
+                    type: "album",
+                }));
+
+            const songResults: SearchResult[] = canciones
+                .filter((item) => getSearchableText(item).includes(text))
+                .map((item) => ({
+                    id: item.id,
+                    title: item.nombre ?? (item as any).titulo ?? "Canción",
+                    subtitle:
+                        item.album?.artista?.nombre ??
+                        (item.album?.artista as any)?.titulo ??
+                        item.album?.nombre ??
+                        (item.album as any)?.titulo,
+                    type: "cancion",
+                }));
+
+            const podcastResults: SearchResult[] = podcasts
+                .filter((item) => getSearchableText(item).includes(text))
+                .map((item) => ({
+                    id: item.id,
+                    title: item.nombre ?? (item as any).titulo ?? "Podcast",
+                    subtitle: item.autor ?? item.descripcion,
+                    type: "podcast",
+                }));
+
+            return [
+                ...playlistResults,
+                ...artistResults,
+                ...albumResults,
+                ...songResults,
+                ...podcastResults,
+            ];
+        },
+        enabled: normalizedQuery.length >= 3,
+    });
+
+    const data = searchQuery.data ?? [];
+    const showInitialButtons = normalizedQuery.length < 3;
+
+    const handleSongAdd = async (songId: number) => {
+        if (!user?.id) return;
+
+        const targetPlaylist = userPlaylistsQuery.data?.[0];
+        if (!targetPlaylist) {
+            Alert.alert("Aviso", "No tienes playlists creadas para añadir canciones");
+            return;
+        }
+
+        try {
+            await addSongToPlaylistAction(targetPlaylist.id, songId, user.id);
+            Alert.alert("Ok", `Canción añadida a ${targetPlaylist.nombre}`);
+        } catch {
+            Alert.alert("Error", "No se pudo añadir la canción a la playlist");
+        }
+    };
+
+    const handleOpenResult = (item: SearchResult) => {
+        if (item.type === "playlist") {
+            router.push(`/(stack)/playlist/${item.id}`);
+            return;
+        }
+        if (item.type === "artista") {
+            router.push(`/(stack)/artist/${item.id}`);
+            return;
+        }
+        if (item.type === "album") {
+            router.push(`/(stack)/album/${item.id}`);
+            return;
+        }
+        if (item.type === "podcast") {
+            router.push(`/(stack)/podcast/${item.id}`);
+        }
+    };
+
     return (
         <SafeAreaView className="flex-1 bg-[#121212]">
-            <View className="flex-1 items-center justify-center px-8">
-                <Text className="mb-2 text-xl font-semibold text-white">Buscar</Text>
-                <Text className="text-sm text-[#B3B3B3]">Pantalla en construcción</Text>
+            <View className="px-4 pb-3 pt-4">
+                <Text className="mb-3 text-2xl font-bold text-white">Buscar</Text>
+                <TextInput
+                    className="h-[50px] rounded-lg bg-[#282828] px-4 text-white"
+                    placeholder="Busca playlists, artistas, álbumes..."
+                    placeholderTextColor="#B3B3B3"
+                    value={query}
+                    onChangeText={setQuery}
+                />
             </View>
+
+            {showInitialButtons ? (
+                <View className="flex-1 px-4 pt-2">
+                    <View className="mb-3 flex-row gap-3">
+                        <Pressable
+                            className="flex-1 rounded-lg bg-[#1DB954] p-4"
+                            onPress={() => router.push("/(stack)/playlists")}
+                        >
+                            <Text className="font-semibold text-black">Playlists</Text>
+                        </Pressable>
+                        <Pressable
+                            className="flex-1 rounded-lg bg-[#1DB954] p-4"
+                            onPress={() => router.push("/(stack)/podcasts")}
+                        >
+                            <Text className="font-semibold text-black">Podcasts</Text>
+                        </Pressable>
+                    </View>
+
+                    <View className="flex-row gap-3">
+                        <Pressable
+                            className="flex-1 rounded-lg bg-[#1DB954] p-4"
+                            onPress={() => router.push("/(stack)/artists")}
+                        >
+                            <Text className="font-semibold text-black">Artistas</Text>
+                        </Pressable>
+                        <Pressable
+                            className="flex-1 rounded-lg bg-[#1DB954] p-4"
+                            onPress={() => router.push("/(stack)/albums")}
+                        >
+                            <Text className="font-semibold text-black">Álbumes</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            ) : (
+                <FlatList
+                    data={data}
+                    keyExtractor={(item) => `${item.type}-${item.id}`}
+                    renderItem={({ item }) => (
+                        <MediaCard
+                            id={item.id}
+                            type={item.type}
+                            title={item.title}
+                            subtitle={item.subtitle}
+                            compact
+                            onPress={() => handleOpenResult(item)}
+                            onPlusPress={
+                                item.type === "cancion" ? () => handleSongAdd(item.id) : undefined
+                            }
+                        />
+                    )}
+                    ListEmptyComponent={
+                        <View className="px-4 py-6">
+                            <Text className="text-sm text-[#B3B3B3]">Sin resultados</Text>
+                        </View>
+                    }
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 24 }}
+                />
+            )}
         </SafeAreaView>
     );
 }

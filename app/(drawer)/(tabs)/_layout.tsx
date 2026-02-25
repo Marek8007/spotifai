@@ -6,13 +6,19 @@ export default function TabsLayout() {
         <Tabs
             screenOptions={{
                 headerShown: false,
+                sceneStyle: {
+                    backgroundColor: "#121212",
+                },
                 tabBarStyle: {
                     backgroundColor: "#121212",
                     borderTopColor: "#282828",
-                    height: 64,
+                    height: 72,
                     paddingTop: 6,
-                    paddingBottom: 8,
-                    marginBottom: 6,
+                    paddingBottom: 12,
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    bottom: 24,
                 },
                 tabBarActiveTintColor: "#1DB954",
                 tabBarInactiveTintColor: "#B3B3B3",
@@ -32,7 +38,7 @@ export default function TabsLayout() {
                 }}
             />
             <Tabs.Screen
-                name="search/index"
+                name="search"
                 options={{
                     title: "Buscar",
                     tabBarIcon: ({ color, size }) => (
